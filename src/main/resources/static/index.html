@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Twitter Sweep</title>
+  </head>
+  <body>
+  <noscript><h2 style="color: #ff0000">JavaScript needs to be enabled for this web app to work!</h2></noscript>  
+
+    <div class="card m-4 shadow-lg">
+        <div class="card-header bg-primary">
+            <div class="row float-right">
+                <div class="col"><button type="button" id="connect" class="btn btn-success m-2" onclick="connect()" >START</button></div>
+                <div class="col"><button type="button" id="disconnect" class="btn btn-danger m-2" onclick="disconnect()">STOP</button></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="input-group">
+                                <input type="text" id="username-search" class="form-control" placeholder="Usernames">
+                                <button type="button" class="btn btn-primary ml-2" onClick="addUsernames()">ADD</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="username-container"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="input-group">
+                                <input type="text" id="keyword-search" class="form-control" placeholder="Keywords">
+                                <button type="button" class="btn btn-primary ml-2" onClick="addKeywords()">ADD</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="keyword-container"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="card m-4 shadow-lg" id="tweets">
+        <div class="card-body" id="tweet-container">
+          
+        </div>
+    </div>
+    
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+    <script src="/search.js"></script>
+
+</body>
+</html>

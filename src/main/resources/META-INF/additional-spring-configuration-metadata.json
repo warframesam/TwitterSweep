@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "twitter.authorization.bearer",
+  "type": "java.lang.String",
+  "description": "Twitter API Authorization Bearer Token 'twitter.authorization.bearer'"
+}]}
