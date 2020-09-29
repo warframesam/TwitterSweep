@@ -3,15 +3,11 @@ var tweetCount = 0;
 
 var stompClient = null;
 
+$("#disconnect").prop("disabled", true);
+
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
-    /*if (connected) {
-        $("#tweets").show();
-    }
-    else {
-        $("#tweets").hide();
-    }*/
 }
 
 function connect() {
@@ -21,8 +17,9 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         sendFilter();
-        //if(!usernameSet.size==0 && !keywordSet.size==0)
-        document.getElementById('tweet-container').insertAdjacentHTML('afterbegin','<div class="d-flex justify-content-center" id="loading"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
+        
+        if(usernameSet.size!=0 || keywordSet.size!=0)
+        	document.getElementById('tweet-container').insertAdjacentHTML('afterbegin','<div class="d-flex justify-content-center" id="loading"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
 		
         stompClient.subscribe('/twittersweep/tweets', function (message) {
         
@@ -57,5 +54,6 @@ function showTweets(tweet) {
     if(document.getElementById("loading")!=null)
     	document.getElementById("loading").remove();
     
-    divContainer.insertAdjacentHTML('afterbegin','<div class="card bg-primary m-4"><div class="card-body text-white">' + tweet + '</div></div>');
+    if(usernameSet.size!=0 || keywordSet.size!=0)
+    	divContainer.insertAdjacentHTML('afterbegin','<div class="card bg-primary m-4"><div class="card-body text-white">' + tweet + '</div></div>');
 }
