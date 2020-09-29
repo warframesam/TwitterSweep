@@ -9,10 +9,6 @@ public class Tweet {
 	
 	private String data;
 
-	public Tweet(String data) {
-		this.data = data;
-	}
-
 	public Tweet() {
 	}
 
@@ -22,11 +18,6 @@ public class Tweet {
 
 	public void setData(String data) {
 		this.data = data;
-	}
-
-	@Override
-	public String toString() {
-		return "Tweet [data=" + data + "]";
 	}
 
 }

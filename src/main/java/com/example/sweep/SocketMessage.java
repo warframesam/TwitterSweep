@@ -24,9 +24,4 @@ public class SocketMessage {
 		this.text = text;
 	}
 
-	@Override
-	public String toString() {
-		return "SocketMessage [text=" + text + "]";
-	}
-
 }

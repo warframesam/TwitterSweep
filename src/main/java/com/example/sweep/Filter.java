@@ -1,7 +1,5 @@
 package com.example.sweep;
 
-import java.util.Arrays;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -36,9 +34,4 @@ public class Filter {
 		this.keywords = keywords;
 	}
 
-	@Override
-	public String toString() {
-		return "Filter [usernames=" + Arrays.toString(usernames) + ", keywords=" + Arrays.toString(keywords) + "]";
-	}
-	
 }

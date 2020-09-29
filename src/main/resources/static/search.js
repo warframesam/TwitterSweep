@@ -12,22 +12,22 @@ document.getElementById("keyword-search").addEventListener("keypress", function(
 });
 
 function addUsernames() {
-    var buttonText = document.getElementById("username-search").value;
+    var searchText = document.getElementById("username-search").value;
     var divContainer = document.getElementById("username-container");
-    if(buttonText!="" && !usernameSet.has(buttonText)) {
-        usernameSet.add(buttonText);
-        divContainer.insertAdjacentHTML('beforeend', '<button class="btn bg-secondary btn-sm m-1"><font class="text-white">' + buttonText + '</font><font class="font-weight-bold text-primary cross" id="username-' + buttonText + '-cross" onmouseover="crossDanger(this.id)" onmouseout="crossPrimary(this.id)" onclick="deleteKey(this.id)"> X</font></button>');
+    if(searchText.localeCompare("")!=0 && !usernameSet.has(searchText)) {
+        usernameSet.add(searchText);
+        divContainer.insertAdjacentHTML('beforeend', '<button class="btn bg-secondary btn-sm m-1"><font class="text-white">' + searchText + '</font><font class="font-weight-bold text-primary cross" id="username-' + searchText + '-cross" onmouseover="crossDanger(this.id)" onmouseout="crossPrimary(this.id)" onclick="deleteKey(this.id)"> X</font></button>');
+    	sendFilter();
     }
-    sendFilter();
 }
 function addKeywords() {
-    var buttonText = document.getElementById("keyword-search").value;
+    var searchText = document.getElementById("keyword-search").value;
     var divContainer = document.getElementById("keyword-container");
-    if(buttonText!="" && !keywordSet.has(buttonText)) {
-        keywordSet.add(buttonText);
-        divContainer.insertAdjacentHTML('beforeend', '<button class="btn bg-secondary btn-sm m-1"><font class="text-white">' + buttonText + '</font><font class="font-weight-bold text-primary cross" id="keyword-' + buttonText + '-cross" onmouseover="crossDanger(this.id)" onmouseout="crossPrimary(this.id)" onclick="deleteKey(this.id)"> X</font></button>');
+    if(searchText.localeCompare("")!=0 && !keywordSet.has(searchText)) {
+        keywordSet.add(searchText);
+        divContainer.insertAdjacentHTML('beforeend', '<button class="btn bg-secondary btn-sm m-1"><font class="text-white">' + searchText + '</font><font class="font-weight-bold text-primary cross" id="keyword-' + searchText + '-cross" onmouseover="crossDanger(this.id)" onmouseout="crossPrimary(this.id)" onclick="deleteKey(this.id)"> X</font></button>');
+    	sendFilter();
     }
-    sendFilter();
 }
 function crossDanger(crossId) {
     document.getElementById(crossId).classList.remove("text-primary");

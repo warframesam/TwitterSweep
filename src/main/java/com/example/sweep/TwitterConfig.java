@@ -18,14 +18,5 @@ public class TwitterConfig {
 		return bearerToken;
 	}
 
-	public void setBearerToken(String bearerToken) {
-		this.bearerToken = bearerToken;
-	}
-
-	@Override
-	public String toString() {
-		return "TwitterConfig [bearerToken=" + bearerToken + "]";
-	}
-	
 }
 

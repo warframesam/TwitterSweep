@@ -1,6 +1,7 @@
 package com.example.sweep;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -9,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+@ConditionalOnProperty(value = "scheduling.enable", havingValue = "true", matchIfMissing = true)
 @Configuration
 @EnableScheduling
 public class SchedulerConfig {

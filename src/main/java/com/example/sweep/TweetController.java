@@ -21,7 +21,7 @@ public class TweetController {
 			  this.filter.setKeywords(filter.getKeywords());
 			  TwitterSweepApplication.updateFilter();
 		  
-		  return new SocketMessage("");
+		  return new SocketMessage("SUCCESS");
 		  }
 	}
 

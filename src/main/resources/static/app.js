@@ -26,7 +26,7 @@ function connect() {
 		
         stompClient.subscribe('/twittersweep/tweets', function (message) {
         
-    	if(JSON.parse(message.body).text.localeCompare("")!=0)
+    	if(JSON.parse(message.body).text.localeCompare("SUCCESS")!=0)
             showTweets(JSON.parse(message.body).text);
         });
     });
