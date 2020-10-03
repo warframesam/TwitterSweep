@@ -1,4 +1,4 @@
-package com.example.sweep;
+package com.example.sweep.Config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

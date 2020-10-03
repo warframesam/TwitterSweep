@@ -5,8 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.example.sweep.Config.TwitterConfig;
+import com.example.sweep.Model.Filter;
+import com.example.sweep.Model.SocketMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -19,15 +23,15 @@ public class TwitterSweepApplication {
 	
 	public static ConfigurableApplicationContext context;
 	
+	private static SimpMessagingTemplate simpMessagingTemplate;
+	
 	private static TwitterConfig twitterConfig;
 	private static Filter filter;
 	private static WebClient webClient;
 	
-	private static Tweet tweet;
-	
 	private static String activeRules;
 	
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) throws Exception {
 		TwitterSweepApplication.context = SpringApplication.run(TwitterSweepApplication.class, args);
 		TwitterSweepApplication.init();
 	}
@@ -36,7 +40,7 @@ public class TwitterSweepApplication {
 
 		TwitterSweepApplication.twitterConfig = context.getBean(TwitterConfig.class);
 		TwitterSweepApplication.filter = context.getBean(Filter.class);
-		TwitterSweepApplication.tweet = context.getBean(Tweet.class);
+		TwitterSweepApplication.simpMessagingTemplate = context.getBean(SimpMessagingTemplate.class);
 		
 		TwitterSweepApplication.initializeWebClient();
 		TwitterSweepApplication.startStream();
@@ -53,27 +57,43 @@ public class TwitterSweepApplication {
 				.build();
 	}
 	
-	public static void startStream() throws Exception{
+	public static void startStream() {
 		try {
 			Flux<String> tweetStream = TwitterSweepApplication.webClient
 			.get()
 			.retrieve()
 			.bodyToFlux(String.class);
 			
-			tweetStream.subscribe(t -> {
-				//System.out.println("****RECIEVED****" + t);
-				TwitterSweepApplication.tweet.setData(t);
-				});
+			tweetStream.subscribe(tweet -> {
+				//System.out.println("****RECIEVED****" + tweet);
+				try {
+					String previousText = "";
+					ObjectMapper objectMapper = new ObjectMapper();
+					
+					JsonNode rootNode = objectMapper.readTree(tweet);
+					JsonNode text = rootNode.path("data").path("text");
+					
+					//System.out.println("****TWEET****" + text);
+					if(!text.asText().equals("") && !previousText.equals(text.asText())) {
+						TwitterSweepApplication.simpMessagingTemplate.convertAndSend("/twittersweep/tweets",new SocketMessage(text.asText()));
+						previousText = text.asText();
+					}
+				
+				}
+				catch(Exception e) {
+					System.out.println(e.getMessage());
+				}
+			});
 		}
 		catch(Exception e) {
 			System.out.println("Twitter API CONNECT FAILURE:" + e.getMessage());
 		}
 	}
 	
-	public static void getActiveRules() throws Exception {
+	public static void getActiveRules() {
 		
 		try {
-		String responseActiveRules = TwitterSweepApplication.webClient
+			String responseActiveRules = TwitterSweepApplication.webClient
 				.get()
 				.uri("/rules")
 				.retrieve()
@@ -113,7 +133,7 @@ public class TwitterSweepApplication {
 			System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootIdsObjectNode));
 			
 			try {
-			String responseDeletedRules = TwitterSweepApplication.webClient
+				String responseDeletedRules = TwitterSweepApplication.webClient
 					.post()
 					.uri("/rules")
 					.contentType(MediaType.APPLICATION_JSON)
@@ -121,9 +141,9 @@ public class TwitterSweepApplication {
 					.retrieve()
 					.bodyToMono(String.class)
 					.block();
-			
-			System.out.println("\n****DELETED RULES****");
-			System.out.println(responseDeletedRules);
+				
+				System.out.println("\n****DELETED RULES****");
+				System.out.println(responseDeletedRules);
 			}
 			catch(Exception e) {
 				System.out.println("Twitter API CONNECT FAILURE:" + e.getMessage());
@@ -133,7 +153,7 @@ public class TwitterSweepApplication {
 			System.out.println("\n****NO ACTIVE RULES TO DELETE****");
 	}
 	
-	public static void updateFilter() throws Exception{
+	public static void updateFilter() throws Exception {
 		
 		System.out.println("\n----------------INITIATED----------------");
 		getActiveRules();
@@ -141,19 +161,19 @@ public class TwitterSweepApplication {
 		
 		if(filter.getUsernames().length!=0 || filter.getKeywords().length!=0) {
 			  
-			  StringBuffer usernameBuffer = new StringBuffer();
-			  for(String username : filter.getUsernames()) {
-				  usernameBuffer.append("from:" + username);
-				  if(username != filter.getUsernames()[filter.getUsernames().length-1])
-					  usernameBuffer.append(" OR ");
-			  }
+			StringBuffer usernameBuffer = new StringBuffer();
+			for(String username : filter.getUsernames()) {
+				usernameBuffer.append("from:" + username);
+			if(username != filter.getUsernames()[filter.getUsernames().length-1])
+				usernameBuffer.append(" OR ");
+			}
 			  
-			  StringBuffer keywordBuffer = new StringBuffer();
-			  for(String keyword : filter.getKeywords()) {
-				  keywordBuffer.append(keyword);
-				  if(keyword != filter.getKeywords()[filter.getKeywords().length-1])
-					  keywordBuffer.append(" OR ");
-			  }
+			StringBuffer keywordBuffer = new StringBuffer();
+			for(String keyword : filter.getKeywords()) {
+				keywordBuffer.append(keyword);
+				if(keyword != filter.getKeywords()[filter.getKeywords().length-1])
+					keywordBuffer.append(" OR ");
+			}
 			
 			ObjectMapper objectMapper = new ObjectMapper();
 			
@@ -181,17 +201,17 @@ public class TwitterSweepApplication {
 			System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootRulesObjectNode));
 			
 			try {
-			String responseConfiguredRules= TwitterSweepApplication.webClient
-			.post()
-			.uri("/rules")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(rootRulesObjectNode)
-			.retrieve()
-			.bodyToMono(String.class)
-			.block();
-			
-			System.out.println("\n****CONFIGURED RULES****");
-			System.out.println(responseConfiguredRules);
+				String responseConfiguredRules= TwitterSweepApplication.webClient
+					.post()
+					.uri("/rules")
+					.contentType(MediaType.APPLICATION_JSON)
+					.bodyValue(rootRulesObjectNode)
+					.retrieve()
+					.bodyToMono(String.class)
+					.block();
+				
+				System.out.println("\n****CONFIGURED RULES****");
+				System.out.println(responseConfiguredRules);
 			}
 			catch(Exception e) {
 				System.out.println("Twitter API CONNECT FAILURE:" + e.getMessage());
@@ -199,6 +219,5 @@ public class TwitterSweepApplication {
 		}
 		else 
 			System.out.println("\n****FILTER EMPTY****");
+		}
 	}
-	
-}

@@ -68,6 +68,11 @@ function deleteKey(crossId) {
 				document.getElementById('tweet-container').insertAdjacentHTML('afterbegin','<div class="d-flex justify-content-center" id="loading"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
 	    	tweetCount = 0;
 	    }
+	    else {
+	    	if(usernameSet.size==0 && keywordSet.size==0)
+	    		document.getElementById('loading').remove();
+	    }
+	    	
     	sendFilter();
 	}
 }

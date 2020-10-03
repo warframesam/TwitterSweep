@@ -1,4 +1,4 @@
-package com.example.sweep;
+package com.example.sweep.Model;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
